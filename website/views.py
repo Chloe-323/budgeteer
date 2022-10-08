@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.template import loader
+from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 def index(request):
@@ -12,7 +15,9 @@ def budget(request):
     return HttpResponse("Budget not implemented yet")
 
 def login(request):
-    return HttpResponse("Login not implemented yet")
+    template = loader.get_template('website/login.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
 
 def logout(request):
     return HttpResponse("Logout not implemented yet")
