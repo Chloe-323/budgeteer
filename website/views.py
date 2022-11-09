@@ -24,7 +24,7 @@ def index(request):
     #update session time
     request.session['create_time'] = datetime.datetime.now().timestamp()
     #render page
-    template = loader.get_template('website/base.html')
+    template = loader.get_template('website/index.html')
     context = {'title': 'Home'}
     return HttpResponse(template.render(context, request))
 
