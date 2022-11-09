@@ -11,6 +11,23 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
+    #if not logged in, redirect to login page
+    if 'session_id' not in request.session:
+        return redirect('login')
+    #if session is expired, redirect to login page
+    if (datetime.datetime.now().timestamp() - request.session['create_time']) > 3600:
+        return redirect('login')
+    #ensure that session_id is valid
+    user = User.objects.get(username=request.session['username'])
+    if request.session['session_id'] != hashlib.sha256(str(user.id).encode('utf-8')).hexdigest():
+        return redirect('login')
+    #update session time
+    request.session['create_time'] = datetime.datetime.now().timestamp()
+    #render page
+    template = loader.get_template('website/base.html')
+    context = {'title': 'Home'}
+    return HttpResponse(template.render(context, request))
+
     return HttpResponse("Index not implemented yet")
 
 def about(request):
@@ -26,7 +43,7 @@ def login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            request.session['session_id'] = hashlib.sha256(str(str(user.id) + str(datetime.datetime.now())).encode('utf-8')).hexdigest()
+            request.session['session_id'] = hashlib.sha256(str(user.id).encode('utf-8')).hexdigest() #TODO: make this more secure
             request.session['create_time'] = datetime.datetime.now().timestamp()
             request.session['username'] = username
             return redirect('index')
@@ -35,7 +52,8 @@ def login(request):
     return HttpResponse(template.render(context, request))
 
 def logout(request):
-    return HttpResponse("Logout not implemented yet")
+    request.session.flush()
+    return redirect('login')
 
 def register(request):
     if request.method == 'POST':

@@ -41,12 +41,6 @@
                         Passwords do not match.
                     </div>
                 </div>
-                <!-- Checkbox to agree to ToS -->
-                <div class="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" value="tos"> I agree to the <a href="/tos/">Terms of Service</a>
-                    </label>
-                </div>
                 {% csrf_token %}
                 <button type="submit" class="w-100 btn btn-lg btn-primary">Submit</button>
             </form>
