@@ -16,35 +16,35 @@
                 <div class="form-floating mb-2">
                     <input type="text" class="form-control" id="username" name="username" placeholder="Username">  
                     <label for="username" class="form-label">Username</label>
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback" id="username_feedback">
                         Please choose a username.
                     </div>
                 </div>
                 <div class="form-floating mb-2">
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email"> 
                     <label for="email" class="form-label">Email</label>
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback" id="email_feedback">
                         Please enter a valid email address.
                     </div>
                 </div>
                 <div class="form-floating mb-2">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                     <label for="password" class="form-label">Password</label>
-                    <div class="invalid-feedback" id='password_feedback'>
+                    <div class="invalid-feedback" id="password_feedback">
                         Password must be at least 8 characters long and contain both letters and numbers.
                     </div>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password">
                     <label for="password2" class="form-label">Confirm Password</label>
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback" id="confirm_password_feedback">
                         Passwords do not match.
                     </div>
                 </div>
                 {% csrf_token %}
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Submit</button>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" id="submit">Submit</button>
             </form>
             <p class="mt-5 mb-3 text-muted" align='center'>Already have an account? <a href="/login/"> Login </a></p>
         </main>
-    <script src="/static/js/verify_register.js"></script>
+    <script src="/static/js/register.js"></script>
 </body>
