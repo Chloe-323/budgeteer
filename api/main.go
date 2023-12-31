@@ -18,11 +18,15 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Log in")
+	var username = r.FormValue("username")
+	var password = r.FormValue("password")
+	fmt.Fprintln(w, "Log in as", username, "with password", password)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Register")
+	var username = r.FormValue("username")
+	var password = r.FormValue("password")
+	fmt.Fprintln(w, "Register as", username, "with password", password)
 }
 
 func createBudget(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +52,12 @@ func addTransaction(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", logging(index))
 	http.HandleFunc("/login", logging(login))
+	http.HandleFunc("/register", logging(register))
+	http.HandleFunc("/createbudget", logging(createBudget))
+	http.HandleFunc("/listbudgets", logging(listBudgets))
+	http.HandleFunc("/view", logging(view))
+	http.HandleFunc("/createcategory", logging(createCategory))
+	http.HandleFunc("/addtransaction", logging(addTransaction))
 
 	http.ListenAndServe(":80", nil)
 }
