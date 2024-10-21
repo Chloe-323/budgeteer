@@ -1,5 +1,3 @@
-import Image from "next/image";
-import localFont from "next/font/local";
 import Layout, { HorizontalSection, VerticalSection } from "./components/layout";
 import { useEffect, useState } from "react";
 
@@ -8,11 +6,11 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch('/api/test',{
+      const result = await fetch('/api/hello',{
       method: 'POST'
     });
     const data = await result.json();
-    setResponseMessage(data.returnValue);
+    setResponseMessage(data.name);
   };
   fetchData();
   }, [])

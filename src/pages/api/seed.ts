@@ -9,6 +9,7 @@ export default async function handler(
 ) {
     const client = new Client();
     client.connect();
+
     await client.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -18,15 +19,23 @@ export default async function handler(
       "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
     `);
+
     await client.query(`
     CREATE TABLE IF NOT EXISTS sessions (
         id TEXT PRIMARY KEY,
-        expires_at TIMESTAMPTZ NOT NULL,
-        user_id INT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        user_id INT NOT NULL REFERENCES users(id),
+        expires_at TIMESTAMPTZ NOT NULL
     ); 
     `);
 
+    await client.query(`
+      INSERT INTO users(name, email, password) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING RETURNING *;
+    `,
+    [
+      'chloe', 'chloe@test.me','A Random Unhashed Password. Uh-oh'
+    ]
+  );
+  
   res.status(200).json({});
 }
 

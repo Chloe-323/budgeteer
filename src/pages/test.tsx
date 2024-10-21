@@ -19,10 +19,10 @@ export default function Home() {
 
   return (
     <Layout>
-        <HorizontalSection>
-          <VerticalSection>
-          {responseMessage ? <p>{responseMessage}</p> : <p>Loading...</p>}
-          </VerticalSection>
+          <HorizontalSection>
+        <VerticalSection>
+        {responseMessage ? <p>{responseMessage}</p> : <p>Loading...</p>}
+        </VerticalSection>
         </HorizontalSection>
     </Layout>
   );

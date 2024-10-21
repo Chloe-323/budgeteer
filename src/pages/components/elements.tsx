@@ -68,3 +68,12 @@ export const ContactButton: React.FC = () => {
     )
 }
 
+export const Card: React.FC<IHasChildrenProps> = (props) => {
+    return (
+        <div className="relative flex flex-col md:flex-row w-full my-6 bg-cascade-100 shadow-sm border border-cascade-200 rounded-lg">
+            <div className='flex flex-col justify-between p-4 leading-normal space-y-5'>
+            {props.children}
+            </div>
+        </div>
+    )
+}
