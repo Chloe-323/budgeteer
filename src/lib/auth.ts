@@ -66,9 +66,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		userId: row.user_id,
 		expiresAt: new Date(row[2] * 1000)
 	};
-	const user: User = {
-		id: row[3]
-	};
+
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await client.query("DELETE FROM sessions WHERE id = $1", [session.id]);
 		return null;
@@ -84,7 +82,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 			]
 		);
 	}
-	return { session, user };
+	return session;
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
@@ -92,7 +90,7 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 }
 
 export type SessionValidationResult =
-	| { session: Session; user: User }
+	| Session
 	| null
 ;
 

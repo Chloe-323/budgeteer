@@ -19,7 +19,7 @@ const navigation = [
 
 ]
 
-function classNames(...classes: string[]) {
+export function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 

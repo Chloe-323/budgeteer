@@ -3,10 +3,11 @@ import { hash } from "@node-rs/argon2";
 import {isValidEmail, isValidPasswordHash} from "./login";
 import pg from 'pg';
 import { ErrorData, MessageData } from "@/lib/auth";
+
 const {Client} = pg;
 
-const client = new Client();
-client.connect();
+const database = new Client();
+database.connect();
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<MessageData | ErrorData>) {
@@ -47,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		parallelism: 1
 	});
 
-	const queryResult = await client.query("INSERT INTO users (name, email, password) VALUES ($1, $2, $3) ON CONFLICT(email) DO NOTHING RETURNING id", [name, email, passwordHash]);
+	const queryResult = await database.query("INSERT INTO users (name, email, password) VALUES ($1, $2, $3) ON CONFLICT(email) DO NOTHING RETURNING id", [name, email, passwordHash]);
 	if (!queryResult) {
 		res.status(500).json({
 			error: "An unknown error occurred"

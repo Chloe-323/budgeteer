@@ -16,7 +16,7 @@ export default async function handler(
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
-      "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
     `);
 
@@ -33,8 +33,19 @@ export default async function handler(
     `,
     [
       'chloe', 'chloe@test.me','A Random Unhashed Password. Uh-oh'
-    ]
-  );
+    ]);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS budgets (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES users(id),
+        name VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        start_date DATE NOT NULL,
+        end_date DATE NOT NULL,
+        data BLOB,
+      );
+    `);
   
   res.status(200).json({});
 }
