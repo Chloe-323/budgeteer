@@ -72,14 +72,14 @@ export const BudgetSidebar: React.FC<IBudgetSidebarProps> = (props: IBudgetSideb
             {
                 props.budgets.map((budget, index) => {
                     return index === selectedBudget ?
-                        <a onClick={() => setSelectedBudget(index)} aria-label="dashboard" className="px-4 py-3 flex items-center justify-between space-x-4 rounded-md text-foreground bg-cascade-400">
+                        <a onClick={() => setSelectedBudget(index)} aria-label="dashboard" className="px-4 py-3 flex items-center justify-between space-x-4 rounded-md text-foreground bg-cascade-400 cursor-pointer">
                             <div className="-mr-1 font-medium">{budget.name}</div>
                             <div className="text-xs text-cascade-700 text-right">
                                 {new Date(budget.startDate).toLocaleDateString()} <br />
                                 {new Date(budget.endDate).toLocaleDateString()}
                             </div>
                         </a> :
-                        <a key={index} onClick={() => setSelectedBudget(index)} className="px-4 py-3 flex items-center justify-between space-x-4 rounded-md text-cascade-700 hover:bg-cascade-400 group group-hover:text-foreground">
+                        <a key={index} onClick={() => setSelectedBudget(index)} className="px-4 py-3 flex items-center justify-between space-x-4 rounded-md text-cascade-700 hover:bg-cascade-400 group group-hover:text-foreground cursor-pointer">
                             <div>{budget.name}</div>
                             <div className="text-xs text-cascade-500 text-right group-hover:text-cascade-700">
                                 {new Date(budget.startDate).toLocaleDateString()} <br />
