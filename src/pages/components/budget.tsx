@@ -62,7 +62,6 @@ async function decryptBudget(encryptedBudget: string, key: string): Promise<IBud
     // Return the decrypted budget
     // Not implemented
 
-    debugger;
     const retval = JSON.parse(CryptoJS.AES.decrypt(encryptedBudget, key).toString(CryptoJS.enc.Utf8));
     return retval as IBudgetData;
     return {
@@ -117,11 +116,28 @@ async function decryptBudget(encryptedBudget: string, key: string): Promise<IBud
     };
 }
 
+async function encryptBudget(budgetData: IBudgetData, key: string): Promise<string> {
+    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(budgetData), key).toString();
+    return encrypted;
+}
+
 async function saveBudget(id: number, budget: Budget): Promise<boolean> {
     // Encrypt the budget
     // Save the encrypted budget to the database
     // Not implemented
 
+    const encrypted = await encryptBudget(budget.data, localStorage.getItem('privatePin') as string);
+    const response = await fetch('/api/save_budget_blob', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, blob: encrypted }),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
     return true;
 }
 
@@ -144,8 +160,12 @@ async function getBudget(metadata: IBudgetMetadata): Promise<Budget | null> {
     }
 
     const data = await getJsonFromResponse(response);
+    if(!data){
+        return null;
+    }
+
     if(data.blob === null) {
-        console.log('No data yet. A fresh budget.');
+        //Empty budget
         return new Budget(metadata, {
             expenseCategories: [],
             incomeCategories: [],
