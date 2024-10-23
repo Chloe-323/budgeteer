@@ -13,13 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         res.status(404).end();
         return;
     }
-
-    if(req.cookies.token === undefined) {
-        res.status(401).end();
-        return;
-    }
-
-    const session = await validateSessionToken(req.cookies.token);
+    
+    const session = await validateSessionToken(req.cookies.token, req.cookies.userKey);
 
     if(session === null) {
         res.status(401).end();

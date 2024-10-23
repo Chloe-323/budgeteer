@@ -2,7 +2,7 @@ import Layout, { HorizontalSection, VerticalSection } from "./components/layout"
 import { useEffect, useState } from "react";
 import { Card } from "./components/elements";
 import * as CryptoJS from 'crypto-js';
-import { clientSalt } from "./_app";
+import { clientSalt, getJsonFromResponse } from "./_app";
 import { Form } from "./components/form";
 
 export async function hashPassword(password: string, salt: string): Promise<string> {
@@ -26,7 +26,7 @@ export default function Login() {
         //that we don't send the plaintext password to the server. The server will hash it again properly.
         const prelimHashedPassword = await hashPassword(password, clientSalt);
 
-        const response = await fetch('/api/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -34,24 +34,17 @@ export default function Login() {
             body: JSON.stringify({ email, password: prelimHashedPassword })
         });
 
-        const data = await response.json();
+        const data = await getJsonFromResponse(response);
 
-        if (data.error) {
-            setResponseMessage(data.error);
-            return;
-        }
-        if (!data.token) {
-            setResponseMessage('An unknown error occurred');
+        if (!response.ok) {
+            setResponseMessage(data.error ?? 'An unknown error occurred');
             return;
         }
 
-        //create cookie for token
-        document.cookie = `token=${data.token}; path=/`;
+        const privatePin = await hashPassword(password, pin);
+        localStorage.setItem('privatePin', privatePin);
+
         window.location.href = '/dashboard';
-
-        const userKey = await hashPassword(password, pin);
-        //create cookie for the userKey. The server should never see this.
-        document.cookie = `userKey=${userKey}; path=/`;
     }
 
     return (

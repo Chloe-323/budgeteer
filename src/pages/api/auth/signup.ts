@@ -63,7 +63,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		return;
 	}
 
-	res.status(200).json({
-		message: "User created successfully"
-	});
+	res.status(200).end();
 }

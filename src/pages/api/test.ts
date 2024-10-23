@@ -11,6 +11,5 @@ export default async function handler(
 ) {
     const token = generateSessionToken();
     const session = await createSession(token, 1);
-    validateSessionToken(token);
   res.status(200).json({ returnValue: "John Doe" });
 }

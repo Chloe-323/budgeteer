@@ -2,7 +2,7 @@ import Layout, { HorizontalSection, VerticalSection } from "./components/layout"
 import { useEffect, useState } from "react";
 import { Card } from "./components/elements";
 import * as CryptoJS from 'crypto-js';
-import { clientSalt } from "./_app";
+import { clientSalt, getJsonFromResponse } from "./_app";
 import { Form } from "./components/form";
 import { hashPassword } from "./login";
 
@@ -23,7 +23,7 @@ export default function Signup() {
         //that we don't send the plaintext password to the server. The server will hash it again properly.
         const prelimHashedPassword = await hashPassword(password, clientSalt);
 
-        const response = await fetch('/api/signup', {
+        const response = await fetch('/api/auth/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export default function Signup() {
             body: JSON.stringify({ name, email, password: prelimHashedPassword })
         });
 
-        const data = await response.json();
+        const data = await getJsonFromResponse(response);
 
         if (data.error) {
             setResponseMessage(data.error);

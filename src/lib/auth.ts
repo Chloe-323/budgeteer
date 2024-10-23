@@ -18,10 +18,6 @@ export type ErrorData = {
 	error: string
 }
 
-export type TokenData = {
-	token: string
-}
-
 export type MessageData = {
 	message: string
 }
@@ -33,7 +29,7 @@ export function generateSessionToken(): string {
 	return token;
 }
 
-export async function createSession(token: string, userId: number): Promise<Session> {
+export async function createSession(token: string, userId: number): Promise<SessionCreationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
@@ -48,18 +44,32 @@ export async function createSession(token: string, userId: number): Promise<Sess
 			session.expiresAt
 		]
 	);
-	return session;
+	return {
+		session: session, 
+		userKey: encodeHexLowerCase(sha256(new TextEncoder().encode(session.userId.toString())))
+	};
 }
 
-export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
+export async function validateSessionToken(token: string | undefined, userKey: string | undefined): Promise<SessionValidationResult> {
+
+	// Variables not provided
+	if(token === undefined || userKey === undefined) {
+		return null;
+	}
+
+	// Find session
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await client.query(
 		"SELECT sessions.id, sessions.user_id, sessions.expires_at FROM sessions WHERE sessions.id = $1",
 		[sessionId]
 	);
+
+	// Session not found
 	if (result === null || result.rowCount === 0) {
 		return null;
 	}
+
+	// Session found
 	const row = result.rows[0];
 	const session: Session = {
 		id: row.id,
@@ -67,11 +77,18 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		expiresAt: new Date(row[2] * 1000)
 	};
 
+	// Session expired
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await client.query("DELETE FROM sessions WHERE id = $1", [session.id]);
 		return null;
 	}
 
+	// User key mismatch
+	if (userKey !== encodeHexLowerCase(sha256(new TextEncoder().encode(session.userId.toString()))) ) {
+		return null;
+	}
+
+	// If session is more than halfway through its duration, extend it
 	if (Date.now() >= session.expiresAt.getTime() - sessionDuration / 2) {
 		session.expiresAt = new Date(Date.now() + sessionDuration);
 		await client.query(
@@ -82,6 +99,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 			]
 		);
 	}
+
 	return session;
 }
 
@@ -98,6 +116,11 @@ export interface Session {
 	id: string;
 	userId: number;
 	expiresAt: Date;
+}
+
+export interface SessionCreationResult {
+	session: Session;
+	userKey: string;
 }
 
 export interface User {

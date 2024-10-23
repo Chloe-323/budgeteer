@@ -8,7 +8,12 @@ export interface IBudgetMetadata {
 export interface IBudgetCategory {
     name: string;
     budgetedAmount: number;
-    subCategories?: IBudgetCategory[];
+    subCategories?: IBudgetSubCategory[];
+}
+
+export interface IBudgetSubCategory {
+    name: string;
+    budgetedAmount: number;
 }
 
 export interface IBudgetTransaction {
@@ -19,27 +24,28 @@ export interface IBudgetTransaction {
     subCategory?: string;
 }
 
-export interface IBudget {
-    metadata: IBudgetMetadata;
-    expenseCategories: IBudgetCategory[];
-    incomeCategories: IBudgetCategory[];
-    transactions: IBudgetTransaction[];
+export class Budget {
+    constructor(
+        public metadata: IBudgetMetadata,
+        public expenseCategories: IBudgetCategory[],
+        public incomeCategories: IBudgetCategory[],
+        public transactions: IBudgetTransaction[]
+    ) {}
 }
 
-
-async function decryptBudget (encryptedBudget: string, key: string): Promise<IBudget> {
+async function decryptBudget(encryptedBudget: string, key: string): Promise<Budget> {
     // Decrypt the budget using the key
     // Return the decrypted budget
     // Not implemented
 
-    return {
-        metadata: {
+    return new Budget(
+        {
             id: "1",
             name: "Budget 1",
             startDate: "2022-01-01",
             endDate: "2022-01-31"
         },
-        expenseCategories: [
+        [
             {
                 name: "Housing",
                 budgetedAmount: 1000,
@@ -59,13 +65,13 @@ async function decryptBudget (encryptedBudget: string, key: string): Promise<IBu
                 budgetedAmount: 200
             }
         ],
-        incomeCategories: [
+        [
             {
                 name: "Salary",
                 budgetedAmount: 2000
             }
         ],
-        transactions: [
+        [
             {
                 date: "2022-01-01",
                 description: "Rent",
@@ -86,6 +92,5 @@ async function decryptBudget (encryptedBudget: string, key: string): Promise<IBu
                 amount: 2000,
                 category: "Salary"
             }
-        ]
-    }
+        ])
 }

@@ -7,6 +7,7 @@ export interface IFormProps {
 }
 
 export interface IFormItemProps {
+    label?: string,
     type: string,
     placeholder: string,
     id: string,
@@ -38,6 +39,7 @@ export default Form;
 export const FormItem: React.FC<{ props: IFormItemProps }> = (props) => {
     return (
         <div className="relative">
+            {props.props.label && <label htmlFor={props.props.id} className="block text-sm font-medium text-cascade-700">{props.props.label}</label>}
             <input 
                 type={props.props.type} 
                 name={props.props.id} 

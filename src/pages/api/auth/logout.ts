@@ -14,11 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		res.status(404).end();
 		return;
 	}
-	if (!req.cookies.token) {
-		res.status(401).end();
-		return;
-	}
-	const session = await validateSessionToken(req.cookies.token);
+
+	const session = await validateSessionToken(req.cookies.token, req.cookies.userKey);
 
 	if (!session) {
 		res.status(401).end();
@@ -26,5 +23,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	invalidateSession(session.id);
-	res.setHeader('Set-Cookie', 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT');
+	res.setHeader('Set-Cookie', [
+        'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT', 
+        'userKey=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        'name=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    ]);
+    res.status(200).end();
 }

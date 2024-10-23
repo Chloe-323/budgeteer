@@ -40,10 +40,10 @@ export default async function handler(
         id SERIAL PRIMARY KEY,
         user_id INT NOT NULL REFERENCES users(id),
         name VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         start_date DATE NOT NULL,
         end_date DATE NOT NULL,
-        data BLOB,
+        data BYTEA
       );
     `);
   

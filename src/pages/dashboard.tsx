@@ -6,7 +6,7 @@ export default function Dashboard() {
     <Layout sidebar>
         <HorizontalSection>
           <VerticalSection>
-            <h1>No budgets yet</h1>
+            <h1>No budgets yet.</h1>
           </VerticalSection>
         </HorizontalSection>
     </Layout>
