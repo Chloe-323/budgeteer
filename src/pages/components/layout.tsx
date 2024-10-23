@@ -7,7 +7,7 @@ export interface IHasChildrenProps {
 }
 
 export interface ILayoutProps extends IHasChildrenProps {
-  sidebar?: boolean;
+  sidebar?: React.ReactNode;
 }
 
 const Layout: React.FC<ILayoutProps> = (props) => {
@@ -15,7 +15,7 @@ const Layout: React.FC<ILayoutProps> = (props) => {
     <main className="h-full flex flex-col">
       <Navbar />
       <div className="flex flex-1">
-        {props.sidebar && <SelfLoadingBudgetSidebar />}
+        {props.sidebar}
         <div className={`flex-1 flex items-center justify-center p-8 pb-20 sm:p-20 ${props.sidebar ? "md:w-[calc(100%-256px)] md:ml-64" : ""}`}>
           <div className="flex flex-col items-center">
             <section>
