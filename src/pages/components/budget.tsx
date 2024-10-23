@@ -1,5 +1,10 @@
+'use client'
+
 import { useState, useEffect } from "react";
 import { getJsonFromResponse } from "../_app";
+import * as CryptoJS from 'crypto-js';
+import { assert } from "console";
+import { Header1 } from "./elements";
 
 export interface IBudgetViewProps {
     metadata: IBudgetMetadata;
@@ -42,11 +47,24 @@ export class Budget {
     ) {}
 }
 
-async function decryptBudget(encryptedBudget: string, key: string): Promise<IBudgetData> {
+function assertIsIBudgetData(data: any): asserts data is IBudgetData {
+    if (!data.expenseCategories || !data.incomeCategories || !data.transactions) {
+        throw new Error('Invalid budget data');
+    }
+    if(!Array.isArray(data.expenseCategories) || !Array.isArray(data.incomeCategories) || !Array.isArray(data.transactions)) {
+        throw new Error('Invalid budget data');
+    }
+    //TODO: Stronger type checking
+}
+
+async function decryptBudget(encryptedBudget: string, key: string): Promise<IBudgetData | null> {
     // Decrypt the budget using the key
     // Return the decrypted budget
     // Not implemented
 
+    debugger;
+    const retval = JSON.parse(CryptoJS.AES.decrypt(encryptedBudget, key).toString(CryptoJS.enc.Utf8));
+    return retval as IBudgetData;
     return {
         expenseCategories: [
             {
@@ -99,6 +117,14 @@ async function decryptBudget(encryptedBudget: string, key: string): Promise<IBud
     };
 }
 
+async function saveBudget(id: number, budget: Budget): Promise<boolean> {
+    // Encrypt the budget
+    // Save the encrypted budget to the database
+    // Not implemented
+
+    return true;
+}
+
 async function getBudget(metadata: IBudgetMetadata): Promise<Budget | null> {
     // Get the encrypted budget from the database
     // Get the key from the session
@@ -118,34 +144,38 @@ async function getBudget(metadata: IBudgetMetadata): Promise<Budget | null> {
     }
 
     const data = await getJsonFromResponse(response);
-
-    return new Budget(metadata, await decryptBudget(data.encryptedBudget, localStorage.getItem('privatePin') as string));
+    if(data.blob === null) {
+        console.log('No data yet. A fresh budget.');
+        return new Budget(metadata, {
+            expenseCategories: [],
+            incomeCategories: [],
+            transactions: []
+        });
+    }
+    const budgetData = await decryptBudget(data.blob, localStorage.getItem('privatePin') as string);
+    if(!budgetData) {
+        return null;
+    }
+    return new Budget(metadata, budgetData);
 }
 
-async function saveBudget(id: number, budget: Budget): Promise<boolean> {
-    // Encrypt the budget
-    // Save the encrypted budget to the database
-    // Not implemented
-
-    return true;
-}
 
 export const BudgetView: React.FC<IBudgetViewProps> = (props: IBudgetViewProps) => {
     const [budget, setBudget] = useState<Budget | null>(null);
 
+    console.log(props.metadata);
     useEffect(() => {
         getBudget(props.metadata).then((budget) => {
             setBudget(budget);
         });
     }, [props.metadata.id]);
-
     if (!budget) {
         return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <h1>{budget.metadata.name}</h1>
+            <Header1>{budget.metadata.name}</Header1>
             <h2>Start Date: {budget.metadata.startDate}</h2>
             <h2>End Date: {budget.metadata.endDate}</h2>
             <h2>Income</h2>

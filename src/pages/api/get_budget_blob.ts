@@ -34,9 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return;
     }
 
-    const queryResult = await database.query("SELECT data FROM budgets WHERE id = $1", [budgetId]);
+    const queryResult = await database.query("SELECT data as blob FROM budgets WHERE id = $1", [budgetId]);
 
-    console.log(queryResult);
     if(!queryResult) {
         res.status(500).end();
         return;
